@@ -5,3 +5,4 @@ dist
 *.egg
 .eggs
 env_p3
+.vscode
