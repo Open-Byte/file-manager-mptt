@@ -4,11 +4,11 @@ from mptt.models import MPTTModel, TreeForeignKey
 from file_manager_mptt.utils.node_types import NODE_TYPE, FOLDER, FILE
 from file_manager_mptt.exceptions.file_node_exception import FileNodeException
 from file_manager_mptt.exceptions.errors import Errors
+from file_manager_mptt.helpers.general_functions import unique_slug_generator
 import uuid
 # Create your models here.
 
 ## identifiers
-
 
 class FileMpttModel(MPTTModel):
 
@@ -16,7 +16,7 @@ class FileMpttModel(MPTTModel):
     name = models.CharField(max_length=100)
     parent = TreeForeignKey('self', null=True, related_name='children', on_delete=models.CASCADE)
     type = models.IntegerField(choices=NODE_TYPE)
-    slug = models.SlugField(max_length=100)
+    slug = models.SlugField(max_length=500, unique=True, blank=True)
     owner = models.ForeignKey(get_user_model(), related_name='volumen', on_delete=models.PROTECT)
     deleted = models.BooleanField(default=False)
 
@@ -26,6 +26,7 @@ class FileMpttModel(MPTTModel):
     class Meta:
         abstract = True
 
+    
 
     def is_folder(self):
         return self.type == FOLDER
@@ -38,8 +39,13 @@ class FileMpttModel(MPTTModel):
         return super().get_children().filter(**filters)
     
     def save(self, *args, **kwargs):
+        
+        if not self.slug:
+            self.slug = unique_slug_generator(self)
 
         if self.parent and self.parent.is_file():
             raise FileNodeException(Errors._FILE_CANNOT_HAVE_CHILDREN)
+        
+        
 
         super(FileMpttModel, self).save(*args, **kwargs) 
