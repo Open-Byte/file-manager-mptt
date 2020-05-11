@@ -31,21 +31,29 @@ class FileMpttModel(MPTTModel):
     def is_folder(self):
         return self.type == FOLDER
 
+
     def is_file(self):
         return self.type == FILE
+
 
     def get_children(self, *args, **kwargs):
         filters = dict(**kwargs)
         return super().get_children().filter(**filters)
     
+
+    def slug_generator(self):
+        return unique_slug_generator(self)
+
+   
+
     def save(self, *args, **kwargs):
         
-        if not self.slug:
-            self.slug = unique_slug_generator(self)
+        if not self.created_date:
+            self.slug = self.slug_generator()
 
         if self.parent and self.parent.is_file():
             raise FileNodeException(Errors._FILE_CANNOT_HAVE_CHILDREN)
         
-        
 
         super(FileMpttModel, self).save(*args, **kwargs) 
+

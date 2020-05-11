@@ -10,8 +10,11 @@ def random_string_generator(size=10):
 def unique_slug_generator(instance, new_slug=None): 
     if new_slug is not None: 
         slug = new_slug 
-    else: 
+    elif instance.slug: 
+        slug = instance.slug 
+    else:
         slug = random_string_generator()
+        
     _class = instance.__class__ 
     slug_exists = _class.objects.filter(slug=slug).exists() 
       

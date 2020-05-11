@@ -73,6 +73,21 @@ class FileMpttModelTest(TestCase):
             self.assertEqual(child, folder_file)
     
 
+    def test_slug_generator_create_record(self):
+
+        folder_node = FileNodeTestModel.objects.create(**test_folder, owner=self.test_user_1)
+        folder_node_slug_duplicate = FileNodeTestModel.objects.create(**test_folder, owner=self.test_user_1, slug=folder_node.slug)
+
+        self.assertNotEqual(folder_node.slug, folder_node_slug_duplicate.slug)
+
+
+    def test_duplicated_slug_update_record_exception(self):
+
+        with self.assertRaises(Exception):
+            folder_node = FileNodeTestModel.objects.create(**test_folder, owner=self.test_user_1)
+            folder_node_slug_duplicate = FileNodeTestModel.objects.create(**test_folder, owner=self.test_user_1)
+            folder_node_slug_duplicate.slug = folder_node.slug
+            folder_node_slug_duplicate.save()
 
         
         
