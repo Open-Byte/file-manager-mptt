@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth  import  get_user_model 
 from mptt.models import MPTTModel, TreeForeignKey
 from file_manager_mptt.utils.node_types import NODE_TYPE, FOLDER, FILE
+from file_manager_mptt.exceptions.file_node_exception import FileNodeException
+from file_manager_mptt.exceptions.errors import Errors
 import uuid
 # Create your models here.
 
@@ -30,3 +32,11 @@ class FileMpttModel(MPTTModel):
 
     def is_file(self):
         return self.type == FILE
+
+
+    def save(self, *args, **kwargs):
+
+        if self.parent and self.parent.is_file():
+            raise FileNodeException(Errors._FILE_CANNOT_HAVE_CHILDREN)
+
+        super(FileMpttModel, self).save(*args, **kwargs) 
