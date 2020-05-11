@@ -33,7 +33,10 @@ class FileMpttModel(MPTTModel):
     def is_file(self):
         return self.type == FILE
 
-
+    def get_children(self, *args, **kwargs):
+        filters = dict(**kwargs)
+        return super().get_children().filter(**filters)
+    
     def save(self, *args, **kwargs):
 
         if self.parent and self.parent.is_file():
