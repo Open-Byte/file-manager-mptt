@@ -3,6 +3,7 @@ from testapp.models import FileNodeTestModel
 from file_manager_mptt.utils.node_types import FILE, FOLDER
 from django.contrib.auth  import  get_user_model 
 from .factory import test_folder, test_sub_folder, test_file
+from file_manager_mptt.exceptions.file_node_exception import FileNodeException
 UserModel = get_user_model()
 
 class FileMpttModelTest(TestCase):
@@ -44,3 +45,31 @@ class FileMpttModelTest(TestCase):
 
     def test_relationship_folder_children(self):
         self.assertEqual(self.folder_node.children.all().count(), 2)
+
+
+    def test_save_folder_into_folder(self):
+        file_node_test = FileNodeTestModel.objects.create(
+            **test_folder, owner=self.test_user_1, parent=self.folder_node
+        )
+        self.assertEqual(file_node_test.parent, self.folder_node)
+
+    def test_save_file_into_folder(self):
+        file_node_test = FileNodeTestModel.objects.create(
+            **test_file, owner=self.test_user_1, parent=self.folder_node
+        )
+        self.assertEqual(file_node_test.parent, self.folder_node)
+
+    def  test_save_folder_into_file_exception(self):
+        
+        with self.assertRaises(Exception):
+            file_node_test = FileNodeTestModel.objects.create(
+                **test_file, owner=self.test_user_1, parent=self.file_node
+            )
+    
+    def test_save_folder_into_file_after_created_exception(self):
+        with self.assertRaises(Exception):
+            file_node_test = FileNodeTestModel.objects.create(
+                **test_file, owner=self.test_user_1
+            )
+            file_node_test.parent = self.file_node
+            file_node_test.save()
