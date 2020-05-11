@@ -73,3 +73,4 @@ class FileMpttModelTest(TestCase):
             )
             file_node_test.parent = self.file_node
             file_node_test.save()
+            

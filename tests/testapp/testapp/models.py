@@ -1,7 +1,7 @@
 from django.db import models
 from file_manager_mptt.models import FileMpttModel
 from django.utils.translation import ugettext_lazy as _
-
+import random
 
 
 class FileNodeTestModel(FileMpttModel):
