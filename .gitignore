@@ -7,3 +7,4 @@ dist
 env_p3
 .vscode
 *.DS_Store*
+.venv

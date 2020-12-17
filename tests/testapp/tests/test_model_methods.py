@@ -17,9 +17,9 @@ class FileMpttModelTest(TestCase):
         type_list = [FOLDER, FILE] if not type else [type]
         folder_files_list = [
             FileNodeTestModel.objects.create(**{
-                    "label": f"{index}", 
-                    "name": f"{node_type}-{index}",
-                    "type": node_type
+                        "label": f"{index}", 
+                        "name": f"{node_type}-{index}",
+                        "type": node_type
                     },
                     owner=self.test_user_1
             ) for node_type, index in zip(choices(type_list, k=quantity), range(quantity))
